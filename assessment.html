@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RAMS–LCC Assessment | Hubner Interface Systems India</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#f4f1eb; --surface:#ffffff; --surface2:#f9f7f3;
+  --border:#ddd8ce; --border2:#c8c2b6;
+  --ink:#1a1714; --muted:#7a7368; --label:#4a4540;
+  --accent:#c0392b; --accent2:#1a5276; --accent3:#1e8449;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6}
+
+/* ── HEADER ── */
+header{background:var(--ink);color:#f4f1eb;padding:0;overflow:hidden;position:relative}
+.header-stripe{height:4px;background:linear-gradient(90deg,var(--accent) 0%,#e67e22 40%,var(--accent2) 100%)}
+.header-body{padding:40px 48px 36px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:24px;max-width:960px;margin:auto}
+.header-left{}
+.brand-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#f97316;margin-bottom:12px;display:block}
+header h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.05;letter-spacing:-.5px}
+header h1 em{font-style:normal;color:#f97316}
+.header-sub{margin-top:10px;font-size:13px;color:#9a9490;font-weight:400}
+.header-badge-col{display:flex;flex-direction:column;gap:8px;align-items:flex-end;padding-top:4px}
+.hbadge{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:3px;padding:5px 12px;color:#c8c4be;letter-spacing:.5px}
+
+/* ── LAYOUT ── */
+.page{max-width:860px;margin:0 auto;padding:40px 24px 80px}
+
+/* ── GIVEN DATA ── */
+.data-banner{background:var(--ink);color:#f4f1eb;border-radius:8px;padding:24px 28px;margin-bottom:36px;position:relative;overflow:hidden}
+.data-banner::before{content:'GIVEN DATA';position:absolute;right:24px;top:50%;transform:translateY(-50%);font-family:'Syne',sans-serif;font-size:5rem;font-weight:800;color:rgba(255,255,255,.04);pointer-events:none;line-height:1}
+.data-banner h3{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#f97316;margin-bottom:16px}
+.data-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px 28px}
+.di{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid rgba(255,255,255,.08);padding:5px 0;font-size:12.5px}
+.dk{color:#9a9490}.dv{font-family:'DM Mono',monospace;font-size:12px;color:#f4f1eb}
+
+/* ── CANDIDATE CARD ── */
+.cand-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:28px 32px;margin-bottom:32px;box-shadow:var(--shadow)}
+.sec-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+label{font-size:11px;font-weight:600;color:var(--label);letter-spacing:.8px;text-transform:uppercase}
+input[type=text],input[type=email],input[type=number],select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;transition:.2s;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(26,82,118,.1)}
+textarea{resize:vertical;min-height:88px}
+select option{background:#fff}
+
+/* ── PART HEADERS ── */
+.part-head{display:flex;align-items:center;gap:14px;margin:40px 0 20px}
+.part-pill{background:var(--accent);color:#fff;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:2px;padding:5px 14px;border-radius:2px;text-transform:uppercase;white-space:nowrap}
+.part-title{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:700;color:var(--ink)}
+.part-line{flex:1;height:1px;background:var(--border2)}
+
+/* ── QUESTION CARDS ── */
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);transition:border-color .2s}
+.qcard:focus-within{border-color:var(--accent2)}
+.qhead{background:var(--surface2);padding:14px 22px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid var(--border)}
+.qnum{background:var(--accent);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:3px;flex-shrink:0;margin-top:1px}
+.qtext{font-size:14px;font-weight:500;color:var(--ink);line-height:1.5;padding-top:3px;flex:1}
+.qtag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;background:rgba(26,82,118,.08);border:1px solid rgba(26,82,118,.2);color:var(--accent2);padding:3px 8px;border-radius:2px;margin-left:auto;flex-shrink:0;align-self:center}
+.qbody{padding:18px 22px}
+.sub-q{margin-bottom:14px}
+.sub-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;display:block}
+.hint{font-size:11px;color:var(--muted);margin-top:5px;font-style:italic}
+
+/* ── SUBMIT ── */
+.submit-zone{margin-top:40px;background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent3);border-radius:8px;padding:32px;text-align:center;box-shadow:var(--shadow)}
+.submit-zone p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+.btn-submit{background:var(--accent);color:#fff;border:none;border-radius:5px;cursor:pointer;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;padding:14px 48px;transition:.2s}
+.btn-submit:hover{background:#a93226;box-shadow:0 4px 20px rgba(192,57,43,.3);transform:translateY(-1px)}
+
+/* ── CONFIRMATION ── */
+#confirmation{display:none}
+.done-card{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent3);border-radius:10px;padding:40px 36px;text-align:center;margin-bottom:28px;box-shadow:var(--shadow)}
+.done-icon{width:60px;height:60px;border-radius:50%;background:rgba(30,132,73,.1);border:2px solid var(--accent3);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px}
+.done-card h2{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--accent3);margin-bottom:8px}
+.done-card p{color:var(--muted);font-size:14px;line-height:1.7}
+.preview-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:24px;font-size:13px}
+.preview-table thead{background:var(--ink);color:#f4f1eb}
+.preview-table th{padding:11px 16px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#f97316}
+.preview-table td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
+.preview-table tr:last-child td{border-bottom:none}
+.preview-table tr:nth-child(even) td{background:var(--surface2)}
+.td-q{color:var(--muted);font-weight:500;width:35%}
+.td-a{color:var(--ink)}
+.action-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.btn-act{padding:11px 26px;border-radius:4px;cursor:pointer;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;border:none;transition:.2s}
+.btn-dl{background:var(--accent2);color:#fff}
+.btn-dl:hover{background:#154360;box-shadow:0 4px 16px rgba(26,82,118,.3)}
+.btn-reset{background:transparent;border:1px solid var(--border2)!important;color:var(--muted);border:none}
+.btn-reset:hover{border-color:var(--accent2)!important;color:var(--accent2)}
+.ts-note{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;font-family:'DM Mono',monospace}
+
+.req{color:var(--accent);margin-left:2px}
+.err-msg{font-size:11px;color:var(--accent);margin-top:4px;display:none}
+.field.error input,.field.error select,.field.error textarea{border-color:var(--accent)}
+.field.error .err-msg{display:block}
+
+@media(max-width:600px){
+  .header-body{padding:28px 20px 24px}
+  .fgrid{grid-template-columns:1fr}
+  .page{padding:24px 14px 60px}
+  .cand-card,.qbody{padding:16px}
+  .qhead{padding:12px 16px}
+  .header-badge-col{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-stripe"></div>
+  <div class="header-body">
+    <div class="header-left">
+      <span class="brand-tag">Hubner Interface Systems India Pvt. Ltd.</span>
+      <h1>RAMS – LCC<br><em>&</em> Railway Systems<br>Assessment</h1>
+      <p class="header-sub">Gangway Systems · Field Study · Failure Analysis</p>
+    </div>
+    <div class="header-badge-col">
+      <span class="hbadge">DATE: 17.03.2026</span>
+      <span class="hbadge">PART 1 + PART 2</span>
+      <span class="hbadge">RAMS CERTIFIED</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+<!-- Given Data -->
+<div class="data-banner">
+  <h3>📋 Reference Data — All Questions</h3>
+  <div class="data-grid">
+    <div class="di"><span class="dk">Fleet Size</span><span class="dv">20 trains</span></div>
+    <div class="di"><span class="dk">Gangways / Train</span><span class="dv">6</span></div>
+    <div class="di"><span class="dk">Total Gangways</span><span class="dv">120</span></div>
+    <div class="di"><span class="dk">Observation Period</span><span class="dv">1 year</span></div>
+    <div class="di"><span class="dk">Distance / Train / Year</span><span class="dv">1,50,000 km</span></div>
+    <div class="di"><span class="dk">Total Fleet Distance</span><span class="dv">30,00,000 km</span></div>
+    <div class="di"><span class="dk">Total Failures</span><span class="dv">6 / year</span></div>
+    <div class="di"><span class="dk">Total Repair Time</span><span class="dv">18 hours</span></div>
+    <div class="di"><span class="dk">Total Maintenance Cost</span><span class="dv">₹9,00,000</span></div>
+  </div>
+</div>
+
+<form id="assessmentForm" novalidate>
+
+<!-- Candidate Info -->
+<div class="cand-card">
+  <div class="sec-label">Candidate Information</div>
+  <div class="fgrid">
+    <div class="field" id="f-name">
+      <label>Full Name <span class="req">*</span></label>
+      <input type="text" id="name" name="name" placeholder="e.g. Arjun Sharma" required/>
+      <span class="err-msg">Name is required</span>
+    </div>
+    <div class="field" id="f-email">
+      <label>Email Address <span class="req">*</span></label>
+      <input type="email" id="email" name="email" placeholder="e.g. arjun@hubner.com" required/>
+      <span class="err-msg">Valid email is required</span>
+    </div>
+    <div class="field">
+      <label>Designation / Role</label>
+      <input type="text" id="designation" name="designation" placeholder="e.g. RAMS Engineer"/>
+    </div>
+    <div class="field">
+      <label>Years of Experience</label>
+      <input type="number" id="experience" name="experience" min="0" max="50" placeholder="e.g. 5"/>
+    </div>
+    <div class="field full">
+      <label>Date of Submission</label>
+      <input type="text" id="sub_date" name="sub_date" readonly/>
+    </div>
+  </div>
+</div>
+
+<!-- PART 1 -->
+<div class="part-head">
+  <span class="part-pill">Part 1</span>
+  <span class="part-title">RAMS / LCC Calculations</span>
+  <div class="part-line"></div>
+</div>
+
+<!-- Q1 MTBF -->
+<div class="qcard">
+  <div class="qhead">
+    <div class="qnum">1</div>
+    <div class="qtext">Calculate the <strong>MTBF (Mean Time Between Failures)</strong> in km.</div>
+    <span class="qtag">Calculation</span>
+  </div>
+  <div class="qbody">
+    <div class="field"><label>Answer</label><input type="text" name="q1_ans" placeholder="e.g. 5,00,000 km"/></div>
+    <div class="field" style="margin-top:12px"><label>Formula / Working</label><textarea name="q1_work" placeholder="MTBF = Total Fleet Distance / Total Failures = ..."></textarea></div>
+  </div>
+</div>
+
+<!-- Q2 Failure Rate -->
+<div class="qcard">
+  <div class="qhead">
+    <div class="qnum">2</div>
+    <div class="qtext">Calculate the <strong>Failure Rate (λ)</strong> per million km.</div>
+    <span class="qtag">Calculation</span>
+  </div>
+  <div class="qbody">
+    <div class="field"><label>Answer</label><input type="text" name="q2_ans" placeholder="e.g. 2 failures / million km"/></div>
+    <div class="field" style="margin-top:12px"><label>Formula / Working</label><textarea name="q2_work" placeholder="λ = Total Failures / Total Fleet Distance × 10⁶ = ..."></textarea></div>
+  </div>
+</div>
+
+<!-- Q3 MTTR -->
+<div class="qcard">
+  <div class="qhead">
+    <div class="qnum">3</div>
+    <div class="qtext">Calculate the <strong>MTTR (Mean Time To Repair)</strong>.</div>
+    <span class="qtag">Calculation</span>
+  </div>
+  <div class="qbody">
+    <div class="field"><label>Answer</label><input type="text" name="q3_ans" placeholder="e.g. 3 hours"/></div>
+    <div class="field" style="margin-top:12px"><label>Formula / Working</label><textarea name="q3_work" placeholder="MTTR = Total Repair Time / Total Failures = ..."></textarea></div>
+  </div>
+</div>
+
+<!-- Q4 Availability -->
+<div class="qcard">
+  <div class="qhead">
+    <div class="qnum">4</div>
+    <div class="qtext">Calculate the <strong>Operational Availability (Ao)</strong> using MTBF and MTTR.<br><small style="color:var(--muted)">Assume 1 km ≈ 1 min → convert MTBF to hours first.</small></div>
+    <span class="qtag">Calculation</span>
+  </div>
+  <div class="qbody">
+    <div class="fgrid">
+      <div class="field"><label>MTBF converted to hours</label><input type="text" name="q4_mtbf_h" placeholder="e.g. 8,333 hours"/></div>
+      <div class="field"><label>Availability Ao</label><input type="text" name="q4_ans" placeholder="e.g. 99.96%"/></div>
+    </div>
+    <div class="field" style="margin-top:12px"><label>Working</label><textarea name="q4_work" placeholder="Ao = MTBF / (MTBF + MTTR) = ..."></textarea></div>
+  </div>
+</div>
+
+<!-- Q5 Cost -->
+<div class="qcard">
+  <div class="qhead">
+    <div class="qnum">5</div>
+    <div class="qtext">Calculate: <strong>(a)</strong> Cost per Failure &nbsp;|&nbsp; <strong>(b)</strong> Cost per km</div>
+    <span class="qtag">Calculation</span>
+  </div>
+  <div class="qbody">
+    <div class="sub-q">
+      <span class="sub-lbl">a) Cost per Failure</span>
+      <div class="field"><input type="text" name="q5a_ans" placeholder="e.g. ₹1,50,000 per failure"/></div>
+      <div class="field" style="margin-top:10px"><label>Working</label><textarea name="q5a_work" rows="2" placeholder="Cost per failure = Total Cost / Total Failures = ..."></textarea></div>
+    </div>
+    <div class="sub-q" style="margin-top:18px">
+      <span class="sub-lbl">b) Cost per km</span>
+      <div class="field"><input type="text" name="q5b_ans" placeholder="e.g. ₹0.30 per km"/></div>
+      <div class="field" style="margin-top:10px"><label>Working</label><textarea name="q5b_work" rows="2" placeholder="Cost per km = Total Cost / Total Fleet Distance = ..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<!-- PART 2 -->
+<div class="part-head">
+  <span class="part-pill">Part 2</span>
+  <span class="part-title">RAMS / LCC Analysis & Interpretation</span>
+  <div class="part-line"></div>
+</div>
+
+<!-- Q6 -->
+<div class="qcard">
+  <div class="qhead">
+    <div class="qnum">6</div>
+    <div class="qtext">"Is <strong>500,000 km MTBF</strong> good or bad?" — Justify your answer with industry context.</div>
+    <span class="qtag">Analysis</span>
+  </div>
+  <div class="qbody">
+    <div class="field"><label>Verdict</label>
+      <select name="q6_verdict">
+        <option value="">— Select —</option>
+        <option>Good</option>
+        <option>Bad</option>
+        <option>Depends on Context</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px"><label>Justification</label><textarea name="q6_just" placeholder="Explain with benchmarks, application criticality, operational context, etc."></textarea></div>
+  </div>
+</div>
+
+<!-- Q7 -->
+<div class="qcard">
+  <div class="qhead">
+    <div class="qnum">7</div>
+    <div class="qtext">"Where would you <strong>focus improvement</strong>?" — Based on the data provided.</div>
+    <span class="qtag">Analysis</span>
+  </div>
+  <div class="qbody">
+    <div class="field"><label>Primary Focus Area</label>
+      <select name="q7_focus">
+        <option value="">— Select primary area —</option>
+        <option>Reduce failure frequency (increase MTBF)</option>
+        <option>Reduce repair time (reduce MTTR)</option>
+        <option>Reduce maintenance cost per failure</option>
+        <option>Improve spare parts availability</option>
+        <option>Improve design / component quality</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px"><label>Detailed Explanation</label><textarea name="q7_detail" placeholder="Describe specific improvement steps, tools, or methodologies (RCA, PM schedule, redesign, etc.)"></textarea></div>
+  </div>
+</div>
+
+<!-- Q8 -->
+<div class="qcard">
+  <div class="qhead">
+    <div class="qnum">8</div>
+    <div class="qtext">"How can we <strong>reduce cost per km</strong>?" — Provide actionable strategies.</div>
+    <span class="qtag">Analysis</span>
+  </div>
+  <div class="qbody">
+    <div class="field"><label>Your Strategies</label><textarea name="q8_strat" style="min-height:110px" placeholder="List practical strategies (predictive maintenance, design improvements, vendor negotiation, training, etc.)"></textarea></div>
+  </div>
+</div>
+
+<!-- Submit -->
+<div class="submit-zone">
+  <p>Review all your answers carefully before submitting.<br>After submission, you will be able to <strong>download your response as a CSV file</strong> to send to HR.</p>
+  <button type="submit" class="btn-submit">Submit Assessment →</button>
+</div>
+
+</form>
+
+<!-- ── CONFIRMATION ── -->
+<div id="confirmation">
+  <div class="done-card">
+    <div class="done-icon">✓</div>
+    <h2>Submitted Successfully</h2>
+    <p id="done-msg">Your assessment has been recorded. Please <strong>download the CSV file below</strong> and email it to your HR / assessment coordinator.</p>
+  </div>
+  <table class="preview-table" id="previewTable">
+    <thead><tr><th>Field</th><th>Your Response</th></tr></thead>
+    <tbody id="previewBody"></tbody>
+  </table>
+  <div class="action-row">
+    <button class="btn-act btn-dl" onclick="downloadCSV()">⬇ Download CSV (Send to HR)</button>
+    <button class="btn-act btn-reset" onclick="resetForm()">↩ Start Over</button>
+  </div>
+  <p class="ts-note" id="tsNote"></p>
+</div>
+
+</div><!-- /page -->
+
+<script>
+// Auto-date
+const now = new Date();
+document.getElementById('sub_date').value = now.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}) + ' ' + now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+
+const FIELDS = [
+  {key:'name',label:'Full Name'},
+  {key:'email',label:'Email'},
+  {key:'designation',label:'Designation'},
+  {key:'experience',label:'Experience (yrs)'},
+  {key:'sub_date',label:'Submission Date/Time'},
+  {key:'q1_ans',label:'Q1 — MTBF Answer'},
+  {key:'q1_work',label:'Q1 — Working'},
+  {key:'q2_ans',label:'Q2 — Failure Rate Answer'},
+  {key:'q2_work',label:'Q2 — Working'},
+  {key:'q3_ans',label:'Q3 — MTTR Answer'},
+  {key:'q3_work',label:'Q3 — Working'},
+  {key:'q4_mtbf_h',label:'Q4 — MTBF in Hours'},
+  {key:'q4_ans',label:'Q4 — Availability Ao'},
+  {key:'q4_work',label:'Q4 — Working'},
+  {key:'q5a_ans',label:'Q5a — Cost per Failure'},
+  {key:'q5a_work',label:'Q5a — Working'},
+  {key:'q5b_ans',label:'Q5b — Cost per km'},
+  {key:'q5b_work',label:'Q5b — Working'},
+  {key:'q6_verdict',label:'Q6 — MTBF Verdict'},
+  {key:'q6_just',label:'Q6 — Justification'},
+  {key:'q7_focus',label:'Q7 — Focus Area'},
+  {key:'q7_detail',label:'Q7 — Detail'},
+  {key:'q8_strat',label:'Q8 — Cost Reduction Strategies'},
+];
+
+let lastData = {};
+
+function validate(fd){
+  let ok=true;
+  ['f-name','f-email'].forEach(id=>document.getElementById(id).classList.remove('error'));
+  if(!fd.get('name')?.trim()){document.getElementById('f-name').classList.add('error');ok=false;}
+  const em=fd.get('email')?.trim();
+  if(!em||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){document.getElementById('f-email').classList.add('error');ok=false;}
+  return ok;
+}
+
+document.getElementById('assessmentForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const fd=new FormData(this);
+  if(!validate(fd))return;
+  lastData=Object.fromEntries(fd.entries());
+
+  const tbody=document.getElementById('previewBody');
+  tbody.innerHTML='';
+  FIELDS.forEach(f=>{
+    const val=lastData[f.key]||'';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="td-q">${f.label}</td><td class="td-a">${val?val.replace(/\n/g,'<br>'):'<em style="color:#aaa">—</em>'}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('done-msg').innerHTML=`Thank you, <strong>${lastData.name||'Candidate'}</strong>. Your assessment has been recorded.<br>Please <strong>download the CSV below</strong> and send it to your HR coordinator.`;
+  document.getElementById('tsNote').textContent='Submitted: '+lastData.sub_date;
+
+  this.style.display='none';
+  document.getElementById('confirmation').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+function downloadCSV(){
+  const rows=[['Field','Response']];
+  FIELDS.forEach(f=>rows.push([f.label,(lastData[f.key]||'').replace(/\n/g,' | ')]));
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`RAMS_${(lastData.name||'Candidate').replace(/\s+/g,'_')}_${now.toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function resetForm(){
+  document.getElementById('assessmentForm').reset();
+  document.getElementById('sub_date').value=now.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'})+' '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('assessmentForm').style.display='block';
+  document.getElementById('confirmation').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

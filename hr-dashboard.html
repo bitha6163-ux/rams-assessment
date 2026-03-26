@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HR Dashboard — RAMS Assessment | Hubner</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#0e1117;--surface:#161b27;--surface2:#1c2336;--surface3:#212840;
+  --border:#2a3350;--border2:#3a4460;
+  --ink:#e8edf8;--muted:#7a88aa;--label:#b0bedc;
+  --accent:#f97316;--blue:#3b82f6;--green:#22c55e;--red:#ef4444;--purple:#a855f7;
+  --shadow:0 4px 20px rgba(0,0,0,.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.sidebar-logo{padding:24px 20px 18px;border-bottom:1px solid var(--border)}
+.logo-tag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;display:block}
+.logo-name{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--ink);line-height:1.2}
+.nav{padding:16px 12px;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:5px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);transition:.15s;margin-bottom:2px}
+.nav-item:hover{background:var(--surface2);color:var(--ink)}
+.nav-item.active{background:rgba(249,115,22,.12);color:var(--accent);font-weight:600}
+.nav-icon{font-size:15px;width:18px;text-align:center}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--ink)}
+.topbar-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.topbar-right{display:flex;gap:10px;align-items:center}
+.badge-count{background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:4px 10px;border-radius:3px}
+
+/* ── CONTENT ── */
+.content{padding:28px 32px}
+
+/* ── SECTION TABS ── */
+.sections{}
+.section{display:none}
+.section.active{display:block}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:18px 20px}
+.stat-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.stat-val{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;line-height:1}
+.stat-card.c1 .stat-val{color:var(--accent)}
+.stat-card.c2 .stat-val{color:var(--blue)}
+.stat-card.c3 .stat-val{color:var(--green)}
+.stat-card.c4 .stat-val{color:var(--purple)}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{background:var(--surface);border:2px dashed var(--border2);border-radius:10px;padding:40px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:24px}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(249,115,22,.04)}
+.upload-icon{font-size:2.5rem;margin-bottom:12px}
+.upload-zone h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:6px}
+.upload-zone p{font-size:13px;color:var(--muted)}
+.upload-zone input[type=file]{display:none}
+.btn-upload{background:var(--accent);color:#fff;border:none;border-radius:4px;padding:10px 24px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px;transition:.2s}
+.btn-upload:hover{background:#e8610a}
+
+/* ── UPLOADED FILES LIST ── */
+.file-list{margin-bottom:24px}
+.file-item{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 18px;display:flex;align-items:center;gap:12px;margin-bottom:8px;transition:.15s}
+.file-item:hover{border-color:var(--border2)}
+.file-icon{font-size:1.4rem}
+.file-name{font-size:13px;font-weight:600;color:var(--ink);flex:1}
+.file-meta{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
+.file-remove{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:3px;padding:3px 8px;cursor:pointer;font-size:11px;transition:.15s}
+.file-remove:hover{border-color:var(--red);color:var(--red)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sd-ok{background:var(--green)}
+.sd-err{background:var(--red)}
+
+/* ── TABLES ── */
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border);margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead{background:var(--surface2)}
+th{padding:10px 14px;text-align:left;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--ink);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+.td-name{font-weight:600;color:var(--ink)}
+.td-email{color:var(--muted);font-family:'DM Mono',monospace;font-size:11px}
+.td-ans{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--label)}
+.td-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.td-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:2px;font-weight:500}
+.tb-good{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.tb-bad{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.tb-dep{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.25)}
+
+/* ── INDIVIDUAL REPORT ── */
+.report-header{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:8px;padding:24px 28px;margin-bottom:20px}
+.report-name{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--ink)}
+.report-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+.rmeta{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);background:var(--surface2);padding:4px 10px;border-radius:3px;border:1px solid var(--border)}
+.report-section{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;overflow:hidden}
+.rs-head{background:var(--surface2);padding:12px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.rs-num{background:var(--accent);color:#fff;font-family:'DM Mono',monospace;font-size:11px;min-width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:2px}
+.rs-title{font-size:13px;font-weight:600;color:var(--ink);flex:1}
+.rs-body{padding:16px 18px}
+.rs-row{display:grid;grid-template-columns:140px 1fr;gap:8px;margin-bottom:10px;font-size:13px}
+.rs-row:last-child{margin-bottom:0}
+.rs-key{color:var(--muted);font-weight:500;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.5px;padding-top:2px}
+.rs-val{color:var(--ink);line-height:1.5;word-break:break-word;white-space:pre-wrap}
+
+/* ── CANDIDATE SELECTOR ── */
+.cand-select-bar{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.cand-select-bar label{font-size:12px;font-weight:600;color:var(--label);letter-spacing:.5px;text-transform:uppercase}
+.cand-select-bar select{background:var(--surface2);border:1px solid var(--border);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 14px;border-radius:4px;outline:none;flex:1;min-width:180px}
+.cand-select-bar select:focus{border-color:var(--blue)}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 20px;border-radius:4px;cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;border:none;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#2563eb}
+.btn-success{background:var(--green);color:#000}
+.btn-success:hover{background:#16a34a}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#e8610a}
+.btn-ghost{background:transparent;border:1px solid var(--border2)!important;color:var(--muted);border:none}
+.btn-ghost:hover{border-color:var(--blue)!important;color:var(--blue)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+
+/* ── EMPTY ── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state .ei{font-size:3rem;margin-bottom:14px}
+.empty-state h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:6px}
+.empty-state p{font-size:13px}
+
+/* ── COMPARISON TABLE extras ── */
+.comp-q{font-weight:600;color:var(--ink);background:var(--surface2)!important;font-size:11px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#000;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:12px 20px;border-radius:5px;z-index:999;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .content{padding:16px}
+  .topbar{padding:14px 16px}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-tag">HR Dashboard</span>
+    <div class="logo-name">Hubner<br>RAMS Portal</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showSection('upload')"><span class="nav-icon">⬆</span> Upload Forms</div>
+    <div class="nav-item" onclick="showSection('comparison')"><span class="nav-icon">⊞</span> Comparison</div>
+    <div class="nav-item" onclick="showSection('reports')"><span class="nav-icon">◉</span> Individual Reports</div>
+    <div class="nav-item" onclick="showSection('export')"><span class="nav-icon">⬇</span> Export</div>
+  </nav>
+  <div class="sidebar-footer">RAMS–LCC · 2026</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Assessment Dashboard</div>
+      <div class="topbar-sub">RAMS – LCC | Railway Systems</div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-count" id="totalBadge">0 candidates</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card c1"><div class="stat-label">Total Submitted</div><div class="stat-val" id="s-total">0</div></div>
+      <div class="stat-card c2"><div class="stat-label">Files Uploaded</div><div class="stat-val" id="s-files">0</div></div>
+      <div class="stat-card c3"><div class="stat-label">MTBF: Good</div><div class="stat-val" id="s-good">0</div></div>
+      <div class="stat-card c4"><div class="stat-label">Avg Experience</div><div class="stat-val" id="s-exp">—</div></div>
+    </div>
+
+    <!-- ═══ UPLOAD SECTION ═══ -->
+    <div class="section active" id="sec-upload">
+      <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()"
+           ondragover="event.preventDefault();this.classList.add('drag')"
+           ondragleave="this.classList.remove('drag')"
+           ondrop="handleDrop(event)">
+        <div class="upload-icon">📂</div>
+        <h3>Upload Candidate CSV Files</h3>
+        <p>Drag & drop multiple CSV files here, or click to browse.<br>Files must be downloaded from the candidate assessment form.</p>
+        <input type="file" id="fileInput" accept=".csv" multiple onchange="handleFiles(this.files)"/>
+        <button class="btn-upload" onclick="event.stopPropagation();document.getElementById('fileInput').click()">Browse Files</button>
+      </div>
+
+      <div class="file-list" id="fileList"></div>
+
+      <div id="uploadEmpty" class="empty-state">
+        <div class="ei">📋</div>
+        <h3>No files uploaded yet</h3>
+        <p>Upload candidate CSV files above to begin reviewing responses.</p>
+      </div>
+    </div>
+
+    <!-- ═══ COMPARISON SECTION ═══ -->
+    <div class="section" id="sec-comparison">
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="showSection('upload')">← Back to Upload</button>
+        <button class="btn btn-success" onclick="exportComparison()">⬇ Export Comparison to Excel</button>
+      </div>
+      <div id="compContent">
+        <div class="empty-state"><div class="ei">⊞</div><h3>No data yet</h3><p>Upload candidate CSVs first.</p></div>
+      </div>
+    </div>
+
+    <!-- ═══ INDIVIDUAL REPORTS ═══ -->
+    <div class="section" id="sec-reports">
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="showSection('upload')">← Back to Upload</button>
+        <button class="btn btn-accent" onclick="printReport()">🖨 Print / Save as PDF</button>
+      </div>
+      <div class="cand-select-bar">
+        <label>View Report For:</label>
+        <select id="candSelect" onchange="renderReport()">
+          <option value="">— Select Candidate —</option>
+        </select>
+      </div>
+      <div id="reportContent">
+        <div class="empty-state"><div class="ei">◉</div><h3>Select a candidate</h3><p>Choose from the dropdown above to view their full report.</p></div>
+      </div>
+    </div>
+
+    <!-- ═══ EXPORT SECTION ═══ -->
+    <div class="section" id="sec-export">
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="showSection('upload')">← Back</button>
+      </div>
+      <div id="exportContent">
+        <div class="empty-state"><div class="ei">⬇</div><h3>Export Options</h3><p>Upload candidate files first to enable exports.</p></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════
+// DATA STORE
+// ════════════════════════════════════════
+let candidates = []; // [{filename, data:{key:value}}]
+
+const FIELD_MAP = {
+  'Full Name':'name','Email':'email','Designation':'designation',
+  'Experience (yrs)':'experience','Submission Date/Time':'submitted_at',
+  'Q1 — MTBF Answer':'q1_ans','Q1 — Working':'q1_work',
+  'Q2 — Failure Rate Answer':'q2_ans','Q2 — Working':'q2_work',
+  'Q3 — MTTR Answer':'q3_ans','Q3 — Working':'q3_work',
+  'Q4 — MTBF in Hours':'q4_mtbf_h','Q4 — Availability Ao':'q4_ans','Q4 — Working':'q4_work',
+  'Q5a — Cost per Failure':'q5a_ans','Q5a — Working':'q5a_work',
+  'Q5b — Cost per km':'q5b_ans','Q5b — Working':'q5b_work',
+  'Q6 — MTBF Verdict':'q6_verdict','Q6 — Justification':'q6_just',
+  'Q7 — Focus Area':'q7_focus','Q7 — Detail':'q7_detail',
+  'Q8 — Cost Reduction Strategies':'q8_strat',
+};
+
+// ════════════════════════════════════════
+// NAV
+// ════════════════════════════════════════
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  const map={upload:0,comparison:1,reports:2,export:3};
+  document.querySelectorAll('.nav-item')[map[id]]?.classList.add('active');
+  if(id==='comparison') renderComparison();
+  if(id==='reports') populateCandSelect();
+  if(id==='export') renderExport();
+}
+
+// ════════════════════════════════════════
+// FILE HANDLING
+// ════════════════════════════════════════
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag');
+  handleFiles(e.dataTransfer.files);
+}
+function handleFiles(files){
+  [...files].forEach(f=>{
+    if(!f.name.endsWith('.csv')){toast('⚠ '+f.name+' is not a CSV file','#ef4444');return;}
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const parsed=parseCSV(ev.target.result);
+      if(!parsed){toast('⚠ Could not parse '+f.name,'#ef4444');return;}
+      const existing=candidates.findIndex(c=>c.filename===f.name);
+      if(existing>=0)candidates.splice(existing,1);
+      candidates.push({filename:f.name,data:parsed,uploadedAt:new Date().toLocaleString('en-IN')});
+      renderFileList();
+      updateStats();
+      toast('✓ '+f.name+' loaded');
+    };
+    reader.readAsText(f);
+  });
+}
+function parseCSV(text){
+  // Remove BOM
+  text=text.replace(/^\uFEFF/,'');
+  const lines=text.split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2)return null;
+  const obj={};
+  lines.slice(1).forEach(line=>{
+    // CSV parse: handle quoted fields
+    const cols=[];let cur='';let inQ=false;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+      else if(c===','&&!inQ){cols.push(cur);cur='';}
+      else cur+=c;
+    }
+    cols.push(cur);
+    const field=(cols[0]||'').trim();
+    const value=(cols[1]||'').trim().replace(/ \| /g,'\n');
+    const key=FIELD_MAP[field];
+    if(key)obj[key]=value;
+  });
+  return Object.keys(obj).length>2?obj:null;
+}
+function renderFileList(){
+  const el=document.getElementById('fileList');
+  const empty=document.getElementById('uploadEmpty');
+  if(candidates.length===0){el.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  el.innerHTML=candidates.map((c,i)=>`
+    <div class="file-item">
+      <div class="status-dot sd-ok"></div>
+      <span class="file-icon">📄</span>
+      <div style="flex:1">
+        <div class="file-name">${c.data.name||'Unknown'} — ${c.filename}</div>
+        <div class="file-meta">${c.data.email||''} &nbsp;·&nbsp; Uploaded: ${c.uploadedAt}</div>
+      </div>
+      <button class="file-remove" onclick="removeCand(${i})">✕ Remove</button>
+    </div>`).join('');
+}
+function removeCand(i){
+  candidates.splice(i,1);
+  renderFileList();
+  updateStats();
+  toast('Removed candidate');
+}
+function updateStats(){
+  document.getElementById('s-total').textContent=candidates.length;
+  document.getElementById('s-files').textContent=candidates.length;
+  document.getElementById('totalBadge').textContent=candidates.length+' candidate'+(candidates.length!==1?'s':'');
+  const good=candidates.filter(c=>(c.data.q6_verdict||'').toLowerCase()==='good').length;
+  document.getElementById('s-good').textContent=good;
+  const exps=candidates.map(c=>parseFloat(c.data.experience)).filter(n=>!isNaN(n));
+  document.getElementById('s-exp').textContent=exps.length?(exps.reduce((a,b)=>a+b,0)/exps.length).toFixed(1)+'y':'—';
+}
+
+// ════════════════════════════════════════
+// COMPARISON TABLE
+// ════════════════════════════════════════
+const COMP_COLS=[
+  {key:'name',label:'Name'},
+  {key:'designation',label:'Designation'},
+  {key:'experience',label:'Exp (yrs)'},
+  {key:'q1_ans',label:'Q1 MTBF'},
+  {key:'q2_ans',label:'Q2 λ'},
+  {key:'q3_ans',label:'Q3 MTTR'},
+  {key:'q4_ans',label:'Q4 Ao'},
+  {key:'q5a_ans',label:'Q5a Cost/Fail'},
+  {key:'q5b_ans',label:'Q5b Cost/km'},
+  {key:'q6_verdict',label:'Q6 Verdict'},
+  {key:'q7_focus',label:'Q7 Focus'},
+  {key:'submitted_at',label:'Submitted'},
+];
+function renderComparison(){
+  const el=document.getElementById('compContent');
+  if(candidates.length===0){
+    el.innerHTML='<div class="empty-state"><div class="ei">⊞</div><h3>No candidates yet</h3><p>Upload CSV files in the Upload tab first.</p></div>';
+    return;
+  }
+  const ths=COMP_COLS.map(c=>`<th>${c.label}</th>`).join('');
+  const rows=candidates.map(c=>{
+    const tds=COMP_COLS.map(col=>{
+      let val=c.data[col.key]||'—';
+      if(col.key==='q6_verdict'){
+        const lv=val.toLowerCase();
+        const cls=lv==='good'?'tb-good':lv==='bad'?'tb-bad':'tb-dep';
+        val=`<span class="td-badge ${cls}">${val}</span>`;
+      }
+      if(col.key==='name')return`<td class="td-name">${val}</td>`;
+      if(col.key==='submitted_at')return`<td class="td-date">${val}</td>`;
+      return`<td class="td-ans" title="${c.data[col.key]||''}">${val}</td>`;
+    }).join('');
+    return`<tr>${tds}</tr>`;
+  }).join('');
+  el.innerHTML=`<div class="table-wrap"><table><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ════════════════════════════════════════
+// INDIVIDUAL REPORT
+// ════════════════════════════════════════
+function populateCandSelect(){
+  const sel=document.getElementById('candSelect');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— Select Candidate —</option>'+
+    candidates.map((c,i)=>`<option value="${i}">${c.data.name||'Candidate '+(i+1)} (${c.data.email||''})</option>`).join('');
+  if(cur!=='')sel.value=cur;
+  renderReport();
+}
+function renderReport(){
+  const sel=document.getElementById('candSelect');
+  const el=document.getElementById('reportContent');
+  if(sel.value===''){el.innerHTML='<div class="empty-state"><div class="ei">◉</div><h3>Select a candidate</h3><p>Choose from the dropdown above.</p></div>';return;}
+  const c=candidates[parseInt(sel.value)];
+  if(!c)return;
+  const d=c.data;
+
+  const verdict=d.q6_verdict||'—';
+  const vcls=verdict.toLowerCase()==='good'?'tb-good':verdict.toLowerCase()==='bad'?'tb-bad':'tb-dep';
+
+  const sections=[
+    {num:'ℹ',title:'Candidate Info',rows:[
+      ['Name',d.name||'—'],['Email',d.email||'—'],
+      ['Designation',d.designation||'—'],['Experience',d.experience?d.experience+' years':'—'],
+      ['Submitted',d.submitted_at||'—'],
+    ]},
+    {num:'1',title:'MTBF (Mean Time Between Failures)',rows:[
+      ['Answer',d.q1_ans||'—'],['Working / Formula',d.q1_work||'—'],
+    ]},
+    {num:'2',title:'Failure Rate (λ) per Million km',rows:[
+      ['Answer',d.q2_ans||'—'],['Working / Formula',d.q2_work||'—'],
+    ]},
+    {num:'3',title:'MTTR (Mean Time To Repair)',rows:[
+      ['Answer',d.q3_ans||'—'],['Working / Formula',d.q3_work||'—'],
+    ]},
+    {num:'4',title:'Operational Availability (Ao)',rows:[
+      ['MTBF in Hours',d.q4_mtbf_h||'—'],['Ao Value',d.q4_ans||'—'],['Working',d.q4_work||'—'],
+    ]},
+    {num:'5a',title:'Cost per Failure',rows:[
+      ['Answer',d.q5a_ans||'—'],['Working',d.q5a_work||'—'],
+    ]},
+    {num:'5b',title:'Cost per km',rows:[
+      ['Answer',d.q5b_ans||'—'],['Working',d.q5b_work||'—'],
+    ]},
+    {num:'6',title:'Is 500,000 km MTBF Good or Bad?',rows:[
+      ['Verdict',`<span class="td-badge ${vcls}">${verdict}</span>`],
+      ['Justification',d.q6_just||'—'],
+    ]},
+    {num:'7',title:'Where to Focus Improvement?',rows:[
+      ['Focus Area',d.q7_focus||'—'],['Detail',d.q7_detail||'—'],
+    ]},
+    {num:'8',title:'How to Reduce Cost per km?',rows:[
+      ['Strategies',d.q8_strat||'—'],
+    ]},
+  ];
+
+  el.innerHTML=`
+    <div class="report-header">
+      <div class="report-name">${d.name||'Unknown Candidate'}</div>
+      <div class="report-meta">
+        <span class="rmeta">${d.email||'—'}</span>
+        <span class="rmeta">${d.designation||'—'}</span>
+        <span class="rmeta">${d.experience||'—'} yrs exp</span>
+        <span class="rmeta">Submitted: ${d.submitted_at||'—'}</span>
+      </div>
+    </div>
+    ${sections.map(s=>`
+      <div class="report-section">
+        <div class="rs-head">
+          <div class="rs-num">${s.num}</div>
+          <div class="rs-title">${s.title}</div>
+        </div>
+        <div class="rs-body">
+          ${s.rows.map(r=>`<div class="rs-row"><div class="rs-key">${r[0]}</div><div class="rs-val">${r[1]}</div></div>`).join('')}
+        </div>
+      </div>`).join('')}`;
+}
+function printReport(){
+  const sel=document.getElementById('candSelect');
+  if(sel.value===''){toast('Select a candidate first','#ef4444');return;}
+  window.print();
+}
+
+// ════════════════════════════════════════
+// EXPORT
+// ════════════════════════════════════════
+function renderExport(){
+  const el=document.getElementById('exportContent');
+  if(candidates.length===0){
+    el.innerHTML='<div class="empty-state"><div class="ei">⬇</div><h3>No data to export</h3><p>Upload candidate CSV files first.</p></div>';
+    return;
+  }
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:12px">📊</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:6px">Comparison Excel</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">All candidates side-by-side in one Excel sheet</div>
+        <button class="btn btn-success" onclick="exportComparison()">⬇ Download .xlsx</button>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:12px">📋</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:6px">Full Data CSV</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">All responses in a flat CSV file</div>
+        <button class="btn btn-primary" onclick="exportFullCSV()">⬇ Download .csv</button>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;text-align:center">
+        <div style="font-size:2.5rem;margin-bottom:12px">🖨</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:6px">Individual PDF</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Go to Individual Reports tab → Print</div>
+        <button class="btn btn-accent" onclick="showSection('reports')">Go to Reports →</button>
+      </div>
+    </div>`;
+}
+
+function exportComparison(){
+  if(candidates.length===0){toast('No data to export','#ef4444');return;}
+  const headers=COMP_COLS.map(c=>c.label);
+  const rows=candidates.map(c=>COMP_COLS.map(col=>c.data[col.key]||''));
+  const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);
+  // Style header row width
+  ws['!cols']=headers.map(()=>({wch:22}));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Candidate Comparison');
+  XLSX.writeFile(wb,`RAMS_Comparison_${new Date().toISOString().slice(0,10)}.xlsx`);
+  toast('✓ Comparison Excel downloaded');
+}
+
+function exportFullCSV(){
+  if(candidates.length===0){toast('No data to export','#ef4444');return;}
+  const allKeys=Object.keys(FIELD_MAP).map(k=>FIELD_MAP[k]);
+  const allLabels=Object.keys(FIELD_MAP);
+  const rows=[['File',...allLabels]];
+  candidates.forEach(c=>{
+    rows.push([c.filename,...allKeys.map(k=>(c.data[k]||'').replace(/\n/g,' | '))]);
+  });
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`RAMS_AllData_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('✓ Full CSV downloaded');
+}
+
+// ════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════
+function toast(msg,bg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=bg||'var(--green)';
+  t.style.color=bg?'#fff':'#000';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
