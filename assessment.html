@@ -167,12 +167,50 @@ select option{background:#fff}
       <span class="err-msg">Valid email is required</span>
     </div>
     <div class="field">
-      <label>Designation / Role</label>
-      <input type="text" id="designation" name="designation" placeholder="e.g. RAMS Engineer"/>
+      <label>Education Qualification <span class="req">*</span></label>
+      <select id="qualification" name="qualification">
+        <option value="">— Select Qualification —</option>
+        <option>B.Tech</option>
+        <option>B.E.</option>
+        <option>M.Tech</option>
+        <option>M.E.</option>
+        <option>Diploma</option>
+        <option>B.Sc Engineering</option>
+        <option>Other</option>
+      </select>
     </div>
     <div class="field">
-      <label>Years of Experience</label>
-      <input type="number" id="experience" name="experience" min="0" max="50" placeholder="e.g. 5"/>
+      <label>Stream / Branch <span class="req">*</span></label>
+      <select id="stream" name="stream">
+        <option value="">— Select Stream —</option>
+        <option>Mechanical Engineering</option>
+        <option>Electrical Engineering</option>
+        <option>Electronics &amp; Communication</option>
+        <option>Civil Engineering</option>
+        <option>Industrial Engineering</option>
+        <option>Production Engineering</option>
+        <option>Automobile Engineering</option>
+        <option>Aerospace Engineering</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>College / University</label>
+      <input type="text" id="college" name="college" placeholder="e.g. NIT Trichy"/>
+    </div>
+    <div class="field">
+      <label>Year of Passing <span class="req">*</span></label>
+      <select id="yop" name="yop">
+        <option value="">— Select Year —</option>
+        <option>2026 (Appearing)</option>
+        <option>2025</option>
+        <option>2024</option>
+        <option>2023</option>
+        <option>2022</option>
+        <option>2021</option>
+        <option>2020</option>
+        <option>2019 or earlier</option>
+      </select>
     </div>
     <div class="field full">
       <label>Date of Submission</label>
@@ -361,8 +399,10 @@ document.getElementById('sub_date').value = now.toLocaleDateString('en-IN',{day:
 const FIELDS = [
   {key:'name',label:'Full Name'},
   {key:'email',label:'Email'},
-  {key:'designation',label:'Designation'},
-  {key:'experience',label:'Experience (yrs)'},
+  {key:'qualification',label:'Education Qualification'},
+  {key:'stream',label:'Stream / Branch'},
+  {key:'college',label:'College / University'},
+  {key:'yop',label:'Year of Passing'},
   {key:'sub_date',label:'Submission Date/Time'},
   {key:'q1_ans',label:'Q1 — MTBF Answer'},
   {key:'q1_work',label:'Q1 — Working'},
