@@ -190,7 +190,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="stat-card c1"><div class="stat-label">Total Submitted</div><div class="stat-val" id="s-total">0</div></div>
       <div class="stat-card c2"><div class="stat-label">Files Uploaded</div><div class="stat-val" id="s-files">0</div></div>
       <div class="stat-card c3"><div class="stat-label">MTBF: Good</div><div class="stat-val" id="s-good">0</div></div>
-      <div class="stat-card c4"><div class="stat-label">Avg Experience</div><div class="stat-val" id="s-exp">—</div></div>
+      <div class="stat-card c4"><div class="stat-label">Latest Batch</div><div class="stat-val" id="s-exp">—</div></div>
     </div>
 
     <!-- ═══ UPLOAD SECTION ═══ -->
@@ -266,8 +266,10 @@ tr:hover td{background:rgba(255,255,255,.015)}
 let candidates = []; // [{filename, data:{key:value}}]
 
 const FIELD_MAP = {
-  'Full Name':'name','Email':'email','Designation':'designation',
-  'Experience (yrs)':'experience','Submission Date/Time':'submitted_at',
+  'Full Name':'name','Email':'email',
+  'Education Qualification':'qualification','Stream / Branch':'stream',
+  'College / University':'college','Year of Passing':'yop',
+  'Submission Date/Time':'submitted_at',
   'Q1 — MTBF Answer':'q1_ans','Q1 — Working':'q1_work',
   'Q2 — Failure Rate Answer':'q2_ans','Q2 — Working':'q2_work',
   'Q3 — MTTR Answer':'q3_ans','Q3 — Working':'q3_work',
@@ -369,8 +371,8 @@ function updateStats(){
   document.getElementById('totalBadge').textContent=candidates.length+' candidate'+(candidates.length!==1?'s':'');
   const good=candidates.filter(c=>(c.data.q6_verdict||'').toLowerCase()==='good').length;
   document.getElementById('s-good').textContent=good;
-  const exps=candidates.map(c=>parseFloat(c.data.experience)).filter(n=>!isNaN(n));
-  document.getElementById('s-exp').textContent=exps.length?(exps.reduce((a,b)=>a+b,0)/exps.length).toFixed(1)+'y':'—';
+  const yops=candidates.map(c=>c.data.yop).filter(Boolean);
+  document.getElementById('s-exp').textContent=yops.length?yops[yops.length-1]:'—';
 }
 
 // ════════════════════════════════════════
@@ -378,8 +380,9 @@ function updateStats(){
 // ════════════════════════════════════════
 const COMP_COLS=[
   {key:'name',label:'Name'},
-  {key:'designation',label:'Designation'},
-  {key:'experience',label:'Exp (yrs)'},
+  {key:'qualification',label:'Qualification'},
+  {key:'stream',label:'Stream'},
+  {key:'yop',label:'Year of Passing'},
   {key:'q1_ans',label:'Q1 MTBF'},
   {key:'q2_ans',label:'Q2 λ'},
   {key:'q3_ans',label:'Q3 MTTR'},
@@ -439,7 +442,8 @@ function renderReport(){
   const sections=[
     {num:'ℹ',title:'Candidate Info',rows:[
       ['Name',d.name||'—'],['Email',d.email||'—'],
-      ['Designation',d.designation||'—'],['Experience',d.experience?d.experience+' years':'—'],
+      ['Qualification',d.qualification||'—'],['Stream',d.stream||'—'],
+      ['College',d.college||'—'],['Year of Passing',d.yop||'—'],
       ['Submitted',d.submitted_at||'—'],
     ]},
     {num:'1',title:'MTBF (Mean Time Between Failures)',rows:[
@@ -477,8 +481,8 @@ function renderReport(){
       <div class="report-name">${d.name||'Unknown Candidate'}</div>
       <div class="report-meta">
         <span class="rmeta">${d.email||'—'}</span>
-        <span class="rmeta">${d.designation||'—'}</span>
-        <span class="rmeta">${d.experience||'—'} yrs exp</span>
+        <span class="rmeta">${d.qualification||'—'} – ${d.stream||'—'}</span>
+        <span class="rmeta">Passing: ${d.yop||'—'}</span>
         <span class="rmeta">Submitted: ${d.submitted_at||'—'}</span>
       </div>
     </div>
